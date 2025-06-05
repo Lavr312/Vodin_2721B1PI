@@ -1,0 +1,80 @@
+<div class="form_recommendation_for_use">
+	<form>
+		<h1>Список рекомендаций по применению</h1>
+		<button class="custom-button-update button-update" type="button" onclick="get_records('recommendation_for_use')">Обновить</button>
+	</form>
+		
+	<table class="table">
+		<thead>
+			<tr>
+				<th>№</th>
+				<th>Идентификатор</th>
+			</tr>
+		</thead>
+		<tbody id="tableBody">
+		</tbody>
+	</table>
+	<br></br>
+	<h1>Добавить запись</h1>
+	<form>
+	    <label for="form_add_1">Идентификатор:</label>
+	    <input type="text" id="form_add_1" class="form_other_3">
+	    <br></br>
+	    <label for="form_add_2">Описание:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_2">
+	    <br></br>
+	    <label for="form_add_3">Дозировка:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_3">
+	    <br></br>
+		<label for="form_add_4">Процедура применения:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_4">
+	    <br></br>
+		<label for="form_add_5">Меры предосторожности:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_5">
+	    <br></br>
+		<label for="form_add_6">Хранение:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_6">
+	    <br></br>
+		<label for="form_add_7">Транспортировка:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_7">
+	    <br></br>
+		<label for="form_add_8">Форма доставки:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_8">
+	    <br></br>
+	    <label for="form_add_9">Идентификатор продукта:</label>
+	    <input type="text" id="form_add_9">
+		<br></br>
+		<br></br>
+		<label>Области применения:</label>		
+		<br></br>
+		<label for="form_other_1">Идентификатор:</label>
+		<input type="text" id="form_other_1">
+		<br></br>
+		<label for="form_other_2">Идентификатор области применения:</label>
+		<select id="form_other_2" class="form_other_list">
+		</select>
+   	    <br></br>
+		<button class="custom-button-add button-add" type="button" onclick="add_other('list_of_areas_of_application', 3)">Добавить область</button>
+		<br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="add_record('recommendation_for_use', 9)">Сохранить</button>
+	    <br></br>
+	    <label id="label_add_result" style="display: none;">Запись успешно сохранена</label>
+	</form>
+	<div id="modal" class="modal">
+		<div class="modal-content">
+            <label for="name">Идентификатор:</label>
+            <br></br>
+            <button id="submit" onclick="close_modal()">Закрыть</button>
+        </div>
+    </div>
+	<br></br>
+	<h1>Удалить запись</h1>
+	<form>
+	    <label for="form_rem_id">Идентификатор:</label>
+	    <input type="text" id="form_rem_id">
+	    <br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="remove_record('recommendation_for_use')">Удалить</button>
+	    <br></br>
+	    <label id="label_rem_result" style="display: none;">Запись успешно удалена</label>
+	</form>
+</div>

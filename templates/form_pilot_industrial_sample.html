@@ -1,0 +1,76 @@
+<div class="form_pilot_industrial_sample">
+	<form>
+		<h1>Опытно-промышленные выработки</h1>
+		<button class="custom-button-update button-update" type="button" onclick="get_records('pilot_industrial_sample')">Обновить</button>
+	</form>
+		
+	<table class="table">
+		<thead>
+			<tr>
+				<th>№</th>
+				<th>Идентификатор</th>
+				<th>Цель работы</th>
+			</tr>
+		</thead>
+		<tbody id="tableBody">
+		</tbody>
+	</table>
+	<br></br>
+	<h1>Добавить запись</h1>
+	<form>
+	    <label for="form_add_1">Идентификатор:</label>
+	    <input type="text" id="form_add_1">
+	    <br></br>
+	    <label for="form_add_2">Цель работы:</label>
+	    <input type="text" id="form_add_2">
+	    <br></br>
+	    <label for="form_add_3">Дата начала работы:</label>
+	    <input type="date" id="form_add_3">
+	    <br></br>
+		<label for="form_add_4">Дата окончания работы:</label>
+	    <input type="date" id="form_add_4">
+	    <br></br>
+	    <label for="form_add_5">Описание работы:</label>
+   	    <input type="text" id="form_add_5">
+   	    <br></br>
+		<label for="form_add_6">контроль параметров:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_6">
+	    <br></br>
+		<label for="form_add_7">Экономическая эффективность:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_7">
+	    <br></br>
+		<label for="form_add_8">Итоги:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_8">
+	    <br></br>
+		<label for="form_add_9">Продукт:</label>
+		<input type="text" id="form_add_9">
+	    <br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="add_record('pilot_industrial_sample', 9)">Сохранить</button>
+	    <br></br>
+	    <label id="label_add_result" style="display: none;">Запись успешно сохранена</label>
+	</form>
+	<div id="modal" class="modal">
+		<div class="modal-content">
+            <label id="mod0">Идентификатор:</label><br></br>
+            <label id="mod1">Цель работы:</label><br></br>
+            <label id="mod2">Дата начала работы:</label><br></br>
+            <label id="mod3">Дата окончания работы:</label><br></br>
+            <label id="mod4">Описание работы:</label><br></br>
+            <label id="mod5">Контроль параметров:</label><br></br>
+            <label id="mod6">Экономическая эффективность:</label><br></br>
+            <label id="mod7">Итоги:</label><br></br>
+            <label id="mod8">Идентификатор продукта:</label><br></br>
+            <button id="submit" onclick="close_modal()">Закрыть</button>
+        </div>
+    </div>
+	<br></br>
+	<h1>Удалить запись</h1>
+	<form>
+	    <label for="form_rem_id">Идентификатор:</label>
+	    <input type="text" id="form_rem_id">
+	    <br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="remove_record('pilot_industrial_sample')">Удалить</button>
+	    <br></br>
+	    <label id="label_rem_result" style="display: none;">Запись успешно удалена</label>
+	</form>
+</div>

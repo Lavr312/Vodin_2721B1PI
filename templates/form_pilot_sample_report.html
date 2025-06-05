@@ -1,0 +1,61 @@
+<div class="form_pilot_sample_report">
+	<form>
+		<h1>Отчёты по ОПВ</h1>
+		<button class="custom-button-update button-update" type="button" onclick="get_records('pilot_sample_report')">Обновить</button>
+	</form>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>№</th>
+				<th>Идентификатор</th>
+				<th>Цель работы</th>
+			</tr>
+		</thead>
+		<tbody id="tableBody">
+		</tbody>
+	</table>
+	<br></br>
+	<h1>Добавить запись</h1>
+	<form>
+	    <label for="form_add_1">Идентификатор:</label>
+	    <input type="text" id="form_add_1">
+	    <br></br>
+		<label for="form_add_2">Цель работы:</label>
+	    <input type="text" id="form_add_2">
+	    <br></br>
+		<label for="form_add_3">Дата начала работы:</label>
+	    <input type="date" id="form_add_3">
+	    <br></br>
+		<label for="form_add_4">Дата окончания работы:</label>
+	    <input type="date" id="form_add_4">
+	    <br></br>
+		<label for="form_add_5">Критерий определения результата:</label>
+	    <input type="text" id="form_add_5">
+	    <br></br>
+		<label for="form_add_6">Подготовка к работе:</label>
+	    <input type="text" id="form_add_6">
+	    <br></br>
+		<label for="form_add_7">Описание работы:</label>
+	    <input type="text" id="form_add_7">
+	    <br></br>
+		<label for="form_add_8">Выводы:</label>
+	    <input type="text" id="form_add_8">
+	    <br></br>
+		<label for="form_add_9">Идентификатор ОПВ:</label>
+		<input type="text" id="form_add_9">
+		<br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="add_record('pilot_sample_report', 9)">Сохранить</button>
+	    <br></br>
+	    <label id="label_add_result" style="display: none;">Запись успешно сохранена</label>
+	</form>
+	<br></br>
+	<h1>Удалить запись</h1>
+	<form>
+	    <label for="form_rem_id">Идентификатор:</label>
+	    <input type="text" id="form_rem_id">
+	    <br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="remove_record('pilot_sample_report')">Удалить</button>
+	    <br></br>
+	    <label id="label_rem_result" style="display: none;">Запись успешно удалена</label>
+	</form>
+</div>

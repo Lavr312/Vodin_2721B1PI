@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ООО "РауХим"</title>
+	<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+<div class="container">
+	<div class="sidebar">
+		<button class="button" type="button" onclick="load_form('product_analysis')">Анализ продукта</button><br></br>
+		<button class="button" type="button" onclick="load_form('settings')">Настройки анализа данных</button><br></br>
+		<button class="button" type="button" onclick="load_form('products')">Продукты</button><br></br>
+		<button class="button" type="button" onclick="load_form('recipes')">Рецепты</button><br></br>
+		<button class="button" type="button" onclick="load_form('raw_materials')">Сырьё</button><br></br>
+		<button class="button" type="button" onclick="load_form('technical_maps')">Техническая карта</button><br></br>
+		<button class="button" type="button" onclick="load_form('passport')">Паспорт</button><br></br>
+		<button class="button" type="button" onclick="load_form('recommendation_for_use')">Рекомендации по применению</button><br></br>
+		<button class="button" type="button" onclick="load_form('area_of_application')">Области применения</button><br></br>
+		<button class="button" type="button" onclick="load_form('pilot_industrial_sample')">Опытно-промышленная выработка</button><br></br>
+		<button class="button" type="button" onclick="load_form('pilot_sample_report')">Отчёт по опытно-промышленной выработке</button><br></br>
+	</div>
+	<div class="place_for_forms" id="place_for_forms">
+	</div>
+</div>
+</body>
+</html>
+
+<script>
+const place_for_forms = document.getElementById('place_for_forms');
+const MESSAGE_DURATION = 3;
+let current_name_table;
+let buf_modal = null;
+let global_data;
+
+function load_form(name_form)
+{
+    fetch('/load_form', {
+        method: 'POST',
+        headers: {
+        	"Content-Type": "application/json",
+        },
+		body: JSON.stringify(name_form),
+    })
+    .then(response => response.json())
+    .then(data => {
+    	place_for_forms.innerHTML = data.data;
+    	current_name_table = name_form;
+    	if (current_name_table == 'recipes')
+    	    get_records_select('recipes');
+    	else if (current_name_table == 'recommendation_for_use')
+    		get_records_select('area_of_application');
+    	else if (current_name_table == 'product_analysis')
+    	{
+    		get_records_select('products');
+    		start_analysis();
+    	}
+    })
+    .catch(error => {
+        console.error('Ошибка при получении формы: ', error);
+    });
+}
+function get_record(id)
+{
+	const data_form = {
+		id: id,
+		name_table: current_name_table
+	};
+	
+	fetch('/get_record', {
+        method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(data_form),
+	})
+    .then(response => response.json())
+    .then(data => {
+		const current_modal = document.getElementById('modal');
+		if(data.data == "")
+			return;
+
+		buf_modal = current_modal.innerHTML;
+		for (let i = 0; i < 50; i++)
+		{
+			if (data.data[0][i] == undefined)
+				break;
+			else
+				document.getElementById('mod' + i).textContent += " " + data.data[0][i];
+		}
+		current_modal.style = "display: block;"
+    })
+    .catch(error => {
+        console.error('Ошибка при получении данных:', error);
+    });
+}
+
+function open_modal_technical_map()
+{	
+	fetch('/get_records_technical_map', {
+        method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(document.getElementById('select_1').value),
+	})
+    .then(response => response.json())
+    .then(data => {
+		const current_modal = document.getElementById('modal_technical_map');
+		const current_modal_buf = document.getElementById('modal_technical_map_content')
+		if(data.data_tm == "")
+			return;
+
+		buf_modal = current_modal.innerHTML;
+		
+		for (let i = 0; i < data.data_tm.length; i++)
+		{
+			if (data.data_tm[i][0] == undefined)
+				break;
+			else
+			{
+				let label_map = document.createElement('label');
+				label_map.textContent = 'Идентификатор: ' + data.data_tm[i][0]
+				current_modal_buf.appendChild(label_map);
+				let br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+
+				label_map = document.createElement('label');
+				label_map.textContent = 'наименование: ' + data.data_tm[i][1]
+				current_modal_buf.appendChild(label_map);
+				br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+
+				label_map = document.createElement('label');
+				label_map.textContent = 'ID продукта: ' + data.data_tm[i][2]
+				current_modal_buf.appendChild(label_map);
+				br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+				br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+
+				data_buf = data.data_la[i]
+				for (let i_action = 0; i_action < data_buf.length; i_action++)
+				{
+					label_map = document.createElement('label');
+					label_map.textContent = data_buf[i_action][1] + ': ' + data_buf[i_action][2]
+					current_modal_buf.appendChild(label_map);
+					br = document.createElement('br');
+					current_modal_buf.appendChild(br);
+				}
+				br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+			}
+		}
+		const but_map = document.createElement('button');
+		but_map.id = 'submit';
+		but_map.onclick = close_modal;
+		but_map.textContent = 'Закрыть';
+		current_modal_buf.appendChild(but_map);
+		current_modal.style = "display: block;"
+    })
+    .catch(error => {
+        console.error('Ошибка при получении данных:', error);
+    });
+}
+
+function open_modal_recipes()
+{	
+	fetch('/get_records_recipes', {
+        method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(document.getElementById('select_2').value),
+	})
+    .then(response => response.json())
+    .then(data => {
+		const current_modal = document.getElementById('modal_recipes');
+		const current_modal_buf = document.getElementById('modal_recipes_content')
+		if(data.data_tm == "")
+			return;
+
+		buf_modal = current_modal.innerHTML;
+		
+		for (let i = 0; i < data.data_tm.length; i++)
+		{
+			if (data.data_tm[i][0] == undefined)
+				break;
+			else
+			{
+				let label_map = document.createElement('label');
+				label_map.textContent = 'Идентификатор: ' + data.data_tm[i][0]
+				current_modal_buf.appendChild(label_map);
+				let br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+
+				label_map = document.createElement('label');
+				label_map.textContent = 'наименование: ' + data.data_tm[i][1]
+				current_modal_buf.appendChild(label_map);
+				br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+
+				label_map = document.createElement('label');
+				label_map.textContent = 'ID продукта: ' + data.data_tm[i][2]
+				current_modal_buf.appendChild(label_map);
+				br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+				br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+
+				data_buf = data.data_la[i]
+				for (let i_action = 0; i_action < data_buf.length; i_action++)
+				{
+					label_map = document.createElement('label');
+					label_map.textContent = data_buf[i_action][1] + ': ' + data_buf[i_action][2]
+					current_modal_buf.appendChild(label_map);
+					br = document.createElement('br');
+					current_modal_buf.appendChild(br);
+				}
+				br = document.createElement('br');
+				current_modal_buf.appendChild(br);
+			}
+		}
+		const but_map = document.createElement('button');
+		but_map.id = 'submit';
+		but_map.onclick = close_modal;
+		but_map.textContent = 'Закрыть';
+		current_modal_buf.appendChild(but_map);
+		current_modal.style = "display: block;"
+    })
+    .catch(error => {
+        console.error('Ошибка при получении данных:', error);
+    });
+}
+
+function close_modal()
+{
+	let current_modal = document.getElementById('modal');
+	if (current_modal == null)
+		current_modal = document.getElementById('modal_technical_map');
+	
+	if (buf_modal != null)
+		current_modal.innerHTML = buf_modal;
+	current_modal.style = "display: none;";
+}
+
+function get_records(name_table)
+{
+	const tableBody = document.getElementById('tableBody');
+	/* Очистка таблицы */
+	const tableBodyRows = document.querySelectorAll('#tableBody tr');
+
+	if (tableBodyRows.length > 0)
+	{
+		tableBodyRows.forEach(tableBodyRows => tableBodyRows.remove());
+	}
+	//document.getElementById('my_select');
+
+	/* Получение новых данных */
+    fetch('/get_records', {
+        method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(name_table),
+	})
+    .then(response => response.json())
+    .then(data => {
+    	if(data.data == "")
+    		return
+    	
+		for (let i = 0; i < data.data.length; i++)
+		{
+			const row = tableBody.insertRow();
+			const numCell = row.insertCell();
+			const idCell = row.insertCell();
+			let nameCell;
+			if (name_table != 'recommendation_for_use')
+				nameCell = row.insertCell();
+				
+			numCell.textContent = `${i+1}`;
+			idCell.textContent = `${data.data[i][0]}`;
+			if (name_table != 'recommendation_for_use')
+				nameCell.textContent = `${data.data[i][1]}`;
+        }
+        const rows = document.querySelectorAll('table tbody tr');
+        rows.forEach(row => {
+			row.addEventListener('click', function() {
+				const first_cell = this.cells[1].textContent;
+				get_record(first_cell);
+			});
+		});
+    })
+    .catch(error => {
+        console.error('Ошибка при получении данных:', error);
+    });
+}
+
+function get_records_select(name_table)
+{
+	const select_body = document.querySelector('select.form_other_list');
+	/* Очистка select */
+	select_body.innerHTML = '';
+
+	/* Получение новых данных */
+    fetch('/get_records', {
+        method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(name_table),
+	})
+    .then(response => response.json())
+    .then(data => {
+    	if(data.data == "")
+    		return
+
+		const option = document.createElement('option');
+		option.value = 0;
+		option.textContent = '...';
+		select_body.appendChild(option);
+		
+		for (let i = 0; i < data.data.length; i++)
+		{
+			const option = document.createElement('option');
+			option.value = data.data[i][0];
+			option.textContent = data.data[i][0] + ' ' + data.data[i][1];
+			select_body.appendChild(option);
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при получении данных:', error);
+    });
+}
+
+function get_records_select_subsidiary(count_table)
+{
+	let select_body = event.target.id;
+	if (select_body == '')
+		select_body = event.target.parentNode.id;
+	let next_select = document.getElementById('select_' + (parseInt(select_body[7], 10) + 1));
+	let name_table = next_select.className;
+	if (name_table == null)
+		return;
+	
+	/* Очистка select */
+	next_select.innerHTML = '';
+
+	/* Получение новых данных */
+    fetch('/get_records', {
+        method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(name_table),
+	})
+    .then(response => response.json())
+    .then(data => {
+    	if(data.data == "")
+    		return
+
+		const option = document.createElement('option');
+		option.value = 0;
+		option.textContent = '...';
+		next_select.appendChild(option);
+		
+		for (let i = 0; i < data.data.length; i++)
+		{
+			const option = document.createElement('option');
+			option.value = data.data[i][0];
+			option.textContent = data.data[i][0] + ' ' + data.data[i][1];
+			next_select.appendChild(option);
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка при получении данных:', error);
+    });
+}
+
+function add_record(name_table, count_values)
+{
+	const label = document.getElementById('label_add_result');
+	let str_req = document.getElementById('form_add_1').value;
+	
+	if (name_table == 'settings')
+	{
+		const data_form = {
+			name_table: document.getElementById('form_add_2').value,
+			name_column: document.getElementById('form_add_3').value
+		};
+		
+		fetch('/get_records_file', {
+	    	method: 'POST',
+	        headers: {
+	        	"Content-Type": "application/json",
+	        },
+	    	body: JSON.stringify(data_form),
+	    })
+	    .then(response => response.json())
+	    .then(data => {
+	   		console.log('Запись успешно получена');
+	   		str_req += ',\'' + data.data_table + '\',\'' + data.data_column + '\'';
+	   		for (let i = 3; i < count_values; i++)
+	   			str_req +=	',\'' + document.getElementById('form_add_' + (i + 1)).value + '\''
+	        console.log(data);
+	        console.log(str_req);
+	    })
+	    .catch(error => {
+	        console.error('Ошибка при сохранении данных:', error);
+	    });
+	}
+	else
+	{
+		for (let i = 1; i < count_values; i++)
+			str_req +=	',\'' + document.getElementById('form_add_' + (i + 1)).value + '\''
+	}
+	
+	const data_form = {
+		name_table: name_table,
+		id: document.getElementById('form_add_1').value,
+		str_req: str_req
+	};
+
+    fetch('/add_record', {
+        method: 'POST',
+        headers: {
+        	"Content-Type": "application/json",
+        },
+    	body: JSON.stringify(data_form),
+    })
+    .then(response => response.json())
+    .then(data => {
+    	if (Number(data.data) >= 1)
+    	{
+    		console.log('Запись успешно сохранена');
+    		if (label.style.display === 'none')
+    		{
+    			label.style.display = 'block';
+    			label.style.color = 'green';
+    			label.textContent = 'Запись успешно сохранена';
+    			setTimeout(function()
+    			{
+    				label.style.display = 'none';
+    			}, MESSAGE_DURATION * 1000);
+    		}
+    	}
+    	else
+    	{
+    		console.log('Запись уже существует');
+    		if (label.style.display === 'none')
+    		{
+	    		label.style.display = 'block';
+		    	label.style.color = 'red';
+		    	label.textContent = 'Запись уже существует';
+		    	setTimeout(function()
+		    	{
+		    		label.style.display = 'none';
+		    	}, MESSAGE_DURATION * 1000);
+		    }
+    	}
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Ошибка при сохранении данных:', error);
+    });
+}
+function add_other(name_table, count_values)
+{
+	const label = document.getElementById('label_add_result');
+	let str_req = document.getElementById('form_other_1').value;
+	for (let i = 1; i < count_values; i++)
+	{
+		let buf_get = document.getElementById('form_other_' + (i + 1));
+		let buf_get_val;
+		if (buf_get == null)
+		{
+			buf_get = document.getElementsByClassName('form_other_' + (i + 1));
+			buf_get_val = buf_get[0].value;
+		}
+		else
+			buf_get_val = buf_get.value;
+		
+		str_req +=	',\'' + buf_get_val + '\'';
+	}
+	
+	const data_form = {
+		name_table: name_table,
+		id: document.getElementById('form_other_1').value,
+		str_req: str_req
+	};
+
+    fetch('/add_record', {
+        method: 'POST',
+        headers: {
+        	"Content-Type": "application/json",
+        },
+    	body: JSON.stringify(data_form),
+    })
+    .then(response => response.json())
+    .then(data => {
+    	if (Number(data.data) >= 1)
+    	{
+    		console.log('Запись успешно сохранена');
+    		if (label.style.display === 'none')
+    		{
+    			label.style.display = 'block';
+    			label.style.color = 'green';
+    			label.textContent = 'Запись успешно сохранена';
+    			setTimeout(function()
+    			{
+    				label.style.display = 'none';
+    			}, MESSAGE_DURATION * 1000);
+    		}
+    	}
+    	else
+    	{
+    		console.log('Запись уже существует');
+    		if (label.style.display === 'none')
+    		{
+	    		label.style.display = 'block';
+		    	label.style.color = 'red';
+		    	label.textContent = 'Запись уже существует';
+		    	setTimeout(function()
+		    	{
+		    		label.style.display = 'none';
+		    	}, MESSAGE_DURATION * 1000);
+		    }
+    	}
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Ошибка при сохранении данных:', error);
+    });
+}
+
+function remove_record(name_table)
+{
+	const formRemId = document.getElementById('form_rem_id');
+	const label = document.getElementById('label_rem_result');	
+	const data_form = {
+		formRemId: formRemId.value,
+		nameTable: name_table
+	};
+
+    fetch('/remove_record', {
+        method: 'POST',
+        headers: {
+        	"Content-Type": "application/json",
+        },
+    	body: JSON.stringify(data_form),
+    })
+    .then(response => response.json())
+    .then(data => {
+    	if (Number(data.data) == 1)
+    	{
+    		console.log('Запись успешно удалена');
+    		if (label.style.display === 'none')
+    		{
+    		    label.style.display = 'block';
+    		    label.style.color = 'green';
+    		    label.textContent = 'Запись успешно удалена';
+    		    setTimeout(function()
+    		    {
+    		    	label.style.display = 'none';
+    			}, MESSAGE_DURATION * 1000);
+    		}
+    	}
+    	else
+    	{
+    		console.log('Запись для удаления не найдена');
+			if (label.style.display === 'none')
+			{
+				label.style.display = 'block';
+	   			label.style.color = 'red';
+	   			label.textContent = 'Запись для удаления не найдена';
+	   			setTimeout(function()
+	   			{
+	   				label.style.display = 'none';
+	   			}, MESSAGE_DURATION * 1000);
+   			}
+    	}
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Ошибка при сохранении данных:', error);
+    });
+}
+
+function start_analysis()
+{
+	const label = document.getElementById('label_result');
+	
+    fetch('/get_records', {
+        method: 'POST',
+        headers: {
+        	"Content-Type": "application/json",
+        },
+        body: JSON.stringify('settings'),
+    })
+    .then(response => response.json())
+    .then(data => {
+    	if (data.data.length >= 1)
+    	{
+    		console.log('Данные получены');
+    		global_data = data.data;
+    		current_form = document.getElementById('form_rules');
+
+    		for (let i = 0; i < data.data.length; i++)
+    		{
+	    		let label_name = document.createElement('label');
+				label_name.textContent = data.data[i][1] + ': ' + data.data[i][3] + ' ';
+				current_form.appendChild(label_name);
+				
+				let input_value = document.createElement('input');
+				input_value.id = 'input_' + i;
+				input_value.type = 'number';
+				current_form.appendChild(input_value);
+
+				let br = document.createElement('br');
+				current_form.appendChild(br);
+				br = document.createElement('br');
+				current_form.appendChild(br);
+
+				let label_res = document.createElement('label');
+				label_res.id = 'res_' + i;
+				label_res.textContent = '';
+				current_form.appendChild(label_res);
+
+				br = document.createElement('br');
+				current_form.appendChild(br);
+				br = document.createElement('br');
+				current_form.appendChild(br);
+			}
+    	}
+    	else
+    	{
+    		console.log('Ошибка получения данных');
+    		if (label.style.display === 'none')
+    		{
+	    		label.style.display = 'block';
+		    	label.style.color = 'red';
+		    	label.textContent = 'Ошибка получения данных';
+		    	setTimeout(function()
+		    	{
+		    		label.style.display = 'none';
+		    	}, MESSAGE_DURATION * 1000);
+		    }
+    	}
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Ошибка при получении данных:', error);
+    });	
+}
+
+function end_analysis()
+{
+	for (let i = 0; i < global_data.length; i++)
+	{
+   		let current_input = document.getElementById('input_' + i);
+   		let current_value = parseFloat(current_input.value);
+
+   		const data_form = {
+   			id: document.getElementsByClassName(global_data[i][1])[0].value,
+ 			name_column: global_data[i][2],
+ 			name_table: global_data[i][1],
+ 		};
+
+		fetch('/get_record_column', {
+		method: 'POST',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data_form),
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.data.length >= 1)
+			{
+				console.log('Данные получены');
+				let column_value = parseFloat(data.data[0][0]);
+				
+				if ((parseFloat(1.0 + parseFloat(global_data[i][4]) / 100.0) * column_value) < current_value)
+				{
+					document.getElementById('res_' + i).textContent = global_data[i][5]
+				}
+				else if ((parseFloat(1.0 - parseFloat(global_data[i][6]) / 100.0) * column_value) > current_value)
+				{
+					document.getElementById('res_' + i).textContent = global_data[i][7]
+				}
+				else
+					document.getElementById('res_' + i).textContent = '';
+			}
+			else
+			{
+				console.log('Ошибка получения данных');
+			}
+			console.log(data);
+		})
+		.catch(error => {
+			console.error('Ошибка при получении данных:', error);
+		});
+	}
+}
+</script>

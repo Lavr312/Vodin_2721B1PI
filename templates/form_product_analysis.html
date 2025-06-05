@@ -1,0 +1,36 @@
+<div class="form_product_analysis">
+	<form>
+		<h1>Выбор источника информации</h1>
+	    <label for="select_1">Продукт:</label>
+		<select id="select_1" class="form_other_list" onclick="get_records_select_subsidiary(5)"></select>
+	    <br></br>
+	    <br></br>
+	    <label for="select_2">Рецепт:</label>
+	    <select id="select_2" class="recipes" onclick="get_records_select_subsidiary(5)"></select>
+	    <br></br>
+	    <label for="select_3">Паспорт:</label>
+	    <select id="select_3" class="passport" onclick="get_records_select_subsidiary(5)"></select>
+	    <br></br>
+	    <label for="select_4">ОПВ:</label>
+	    <select id="select_4" class="pilot_industrial_sample" onclick="get_records_select_subsidiary(5)"></select>
+	    <br></br>
+	    <label for="select_5">Отчёт по ОПВ:</label>
+	    <select id="select_5" class="pilot_sample_report" onclick="get_records_select_subsidiary(5)"></select>
+	    <br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="open_modal_technical_map()">Показать список действий</button>
+	    <button class="custom-button-update button-update" type="button" onclick="open_modal_recipes()">Показать список рецептов</button>
+	    <br></br>
+	    <label id="label_result" style="display: none;">Запись успешно сохранена</label>
+	</form>
+	<div id="modal_technical_map" class="modal_technical_map">
+		<div id="modal_technical_map_content" class="modal-content"></div>
+	</div>
+	<div id="modal_recipes" class="modal_recipes">
+			<div id="modal_recipes_content" class="modal-content"></div>
+	</div>
+	<br></br>
+   	<form id="form_rules">
+   	</form>
+   	<br></br>
+   	<button class="custom-button-update button-update" type="button" onclick="end_analysis()">Проверка</button>
+</div>

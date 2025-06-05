@@ -1,0 +1,52 @@
+<div class="form_area_of_applicaton">
+	<form>
+		<h1>Области применения</h1>
+		<button class="custom-button-update button-update" type="button" onclick="get_records('area_of_application')">Обновить</button>
+	</form>
+		
+	<table class="table">
+		<thead>
+			<tr>
+				<th>№</th>
+				<th>Идентификатор</th>
+				<th>Наименование</th>
+			</tr>
+		</thead>
+		<tbody id="tableBody">
+		</tbody>
+	</table>
+	<br></br>
+	<h1>Добавить запись</h1>
+	<form>
+	    <label for="form_add_1">Идентификатор:</label>
+	    <input type="text" id="form_add_1">
+	    <br></br>
+	    <label for="form_add_2">Наименование:</label>
+	    <input type="text" id="form_add_2">
+	    <br></br>
+	    <label for="form_add_3">Краткое описание:</label>
+	    <input type="text" style="width: 300px; height: 50px;" id="form_add_3">
+	    <br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="add_record('area_of_application', 3)">Сохранить</button>
+	    <br></br>
+	    <label id="label_add_result" style="display: none;">Запись успешно сохранена</label>
+	</form>
+	<div id="modal" class="modal">
+		<div class="modal-content">
+            <label id="mod0">Идентификатор:</label><br></br>
+            <label id="mod1">Наименование:</label><br></br>
+            <label id="mod2">Описание:</label><br></br>
+            <button id="submit" onclick="close_modal()">Закрыть</button>
+        </div>
+    </div>
+	<br></br>
+	<h1>Удалить запись</h1>
+	<form>
+	    <label for="form_rem_id">Идентификатор:</label>
+	    <input type="text" id="form_rem_id">
+	    <br></br>
+	    <button class="custom-button-update button-update" type="button" onclick="remove_record('area_of_applicaton')">Удалить</button>
+	    <br></br>
+	    <label id="label_rem_result" style="display: none;">Запись успешно удалена</label>
+	</form>
+</div>
