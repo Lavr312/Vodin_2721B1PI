@@ -1,4 +1,0 @@
-Продукты
-products
-Индекс ph
-ph_index
